@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BLIND TIMER // SABOTAGE EDITION</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <canvas id="fx-canvas"></canvas>
+  <div id="glitch-overlay" class="glitch-overlay hidden" aria-hidden="true"></div>
+
+  <!-- 偽システムアラート（妨害用） -->
+  <div id="fake-notification" class="sys-alert-banner hidden" aria-hidden="true">
+    <div class="alert-badge-box" id="notif-code">ERR</div>
+    <div class="alert-content">
+      <div class="alert-meta">
+        <span id="notif-app">SYSTEM.ALERT</span>
+        <span>NOW</span>
+      </div>
+      <div class="alert-msg" id="notif-text">緊急警告：タイマーが異常終了しました</div>
+    </div>
+  </div>
+
+  <!-- 悪魔のささやき -->
+  <div id="devil-whisper" class="psycho-whisper hidden" aria-hidden="true"></div>
+
+  <div class="app-shell" id="app-shell">
+    <!-- トップ計器ヘッダー -->
+    <header class="top-header">
+      <div class="brand-mark">
+        <span class="brand-led"></span>
+        <span>BLIND TIMER</span>
+        <span class="brand-ver">SABOTAGE</span>
+      </div>
+      <div class="header-actions">
+        <button type="button" id="btn-sound" class="sound-pill" title="BGM・効果音切替">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+          <span id="sound-label">AUDIO ON</span>
+        </button>
+        <button type="button" id="btn-home" class="icon-square-btn hidden" title="タイトルへ戻る" aria-label="ホーム">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 1. タイトル＆モード選択 -->
+    <main id="screen-title" class="view-screen active">
+      <div class="title-hero">
+        <span class="corner-tick tl"></span>
+        <span class="corner-tick tr"></span>
+        <span class="corner-tick bl"></span>
+        <span class="corner-tick br"></span>
+        <div class="hero-kicker">CONTINUOUS SYNTH BGM &times; EXTREME SABOTAGE</div>
+        <h1 class="hero-main-title">BLIND TIMER</h1>
+        <p class="hero-lead">3.00秒後に数字は消える。暴走するBGM・増殖する偽STOPボタン・画面上下反転など、あらゆる複合妨害を突破して目標タイムで止めろ！</p>
+        <div class="audio-notice-strip">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+          </svg>
+          <span>BGM＆音響トラップ搭載：音楽のテンポ暴走に惑わされるな</span>
+        </div>
+      </div>
+
+      <div class="mode-list">
+        <button type="button" class="mode-item" data-mode="quick">
+          <div class="mode-symbol">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </div>
+          <div class="mode-meta">
+            <div class="mode-title-row">
+              <span class="mode-title-text">QUICK RANDOM</span>
+              <span class="tag-pill tag-orange">複合妨害</span>
+            </div>
+            <div class="mode-sub-desc">ランダム目標タイムを音響・視覚・操作トラップの中で止めろ</div>
+          </div>
+          <span class="mode-chevron">&rarr;</span>
+        </button>
+
+        <button type="button" class="mode-item" data-mode="math">
+          <div class="mode-symbol">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+          <div class="mode-meta">
+            <div class="mode-title-row">
+              <span class="mode-title-text">MATH PANIC</span>
+              <span class="tag-pill tag-orange">四則演算</span>
+            </div>
+            <div class="mode-sub-desc">「＋ − × ÷」の暗算と妨害ギミックの同時パニックに挑め</div>
+          </div>
+          <span class="mode-chevron">&rarr;</span>
+        </button>
+
+        <button type="button" class="mode-item is-survival" data-mode="survival">
+          <div class="mode-symbol">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path>
+            </svg>
+          </div>
+          <div class="mode-meta">
+            <div class="mode-title-row">
+              <span class="mode-title-text">LIMIT SURVIVAL</span>
+              <span class="tag-pill tag-gold">豪華リザルト</span>
+            </div>
+            <div class="mode-sub-desc">連続クリアでリザルト筐体が5段階進化！結果を確認して次へ</div>
+          </div>
+          <span class="mode-chevron">&rarr;</span>
+        </button>
+      </div>
+
+      <div class="record-footer">
+        <span>SURVIVAL BEST STREAK</span>
+        <span><strong id="best-streak">0</strong> WINS</span>
+      </div>
+    </main>
+
+    <!-- 2. ゲームプレイ画面 -->
+    <section id="screen-game" class="view-screen">
+      <div id="survival-hud" class="telemetry-bar hidden">
+        <div class="tele-cell">
+          <span class="tele-key">STAGE</span>
+          <span class="tele-val" id="hud-stage">1</span>
+        </div>
+        <div class="tele-cell">
+          <span class="tele-key">TOLERANCE</span>
+          <span class="tele-val volt" id="hud-tolerance">&plusmn;0.60s</span>
+        </div>
+        <div class="tele-cell">
+          <span class="tele-key">STREAK</span>
+          <span class="tele-val gold" id="hud-streak">0</span>
+        </div>
+      </div>
+
+      <div class="target-module">
+        <span class="corner-tick tl"></span>
+        <span class="corner-tick br"></span>
+        <div class="target-kicker" id="target-label">TARGET TIME</div>
+        <div class="target-readout" id="target-display">00.00<span class="unit">s</span></div>
+        <div class="target-note" id="target-hint">3.00秒後に数字消失。全妨害に耐えろ</div>
+      </div>
+
+      <div class="chrono-dial-wrap" id="timer-stage">
+        <svg class="chrono-svg" viewBox="0 0 260 260">
+          <circle class="dial-track" cx="130" cy="130" r="114"></circle>
+          <circle class="dial-ticks" cx="130" cy="130" r="114"></circle>
+          <circle class="dial-progress" id="ring-bar" cx="130" cy="130" r="114"></circle>
+        </svg>
+
+        <div class="chrono-center">
+          <div class="chrono-state-tag" id="timer-status">SYS.READY</div>
+          <div class="chrono-time-readout" id="timer-digits">0.00</div>
+          <div class="eq-bars" aria-hidden="true">
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+            <span class="eq-bar"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="trigger-deck" id="trigger-deck">
+        <button type="button" id="btn-action" class="hardware-trigger state-ready">
+          <span class="trigger-label-main" id="btn-main-text">START</span>
+          <span class="trigger-label-sub" id="btn-sub-text">TAP / CLICK / SPACE</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. リザルト画面 -->
+    <section id="screen-result" class="view-screen">
+      <div class="result-sheet" id="result-card">
+        <div class="luxury-rays"></div>
+        <div class="luxury-crest">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+
+        <div class="res-mode-kicker" id="res-mode-tag">QUICK RANDOM</div>
+        <div class="res-rank-chip" id="res-rank-badge">RANK S</div>
+        <h2 class="res-headline" id="res-title">人間原子時計</h2>
+
+        <div id="res-survival-box" class="survival-summary-box hidden">
+          <div class="surv-kicker">SURVIVAL STREAK</div>
+          <div class="surv-count"><span id="res-streak-count">0</span> <small>連続クリア</small></div>
+          <div class="surv-grade" id="res-tier-name">TIER 2 // ANODIZED BRONZE</div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-tile">
+            <span class="metric-key">目標タイム</span>
+            <span class="metric-val" id="res-target">8.45s</span>
+          </div>
+          <div class="metric-tile">
+            <span class="metric-key">あなたの記録</span>
+            <span class="metric-val volt" id="res-actual">8.44s</span>
+          </div>
+          <div class="metric-tile span-2">
+            <span class="metric-key">誤差（DIFF）</span>
+            <span class="metric-diff" id="res-diff">-0.01s</span>
+          </div>
+        </div>
+
+        <div class="sabotage-log-box">
+          <span class="sab-key">発生した妨害:</span>
+          <span class="sab-val" id="res-gimmick-name">なし（ガチンコ勝負）</span>
+        </div>
+
+        <p class="res-note" id="res-comment">驚異的な時間精度。</p>
+
+        <div class="res-btn-stack">
+          <button type="button" id="btn-retry" class="btn-action-primary">もう一度プレイ &#x21bb;</button>
+          <div class="share-row">
+            <button type="button" id="btn-line-share" class="btn-line-share">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+              </svg>
+              <span>LINEで画像共有</span>
+            </button>
+            <button type="button" id="btn-save-img" class="btn-save-img">
+              <span>結果画像を保存</span>
+            </button>
+          </div>
+        </div>
+        <div id="copy-toast" class="clipboard-msg hidden"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="./game.js"></script>
+</body>
+</html>
