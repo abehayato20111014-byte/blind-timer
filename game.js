@@ -927,7 +927,7 @@
           const zorome = [4.44, 5.55, 6.66, 7.77, 8.88, 9.99, 11.11, 12.34];
           state.targetTime = zorome[Math.floor(Math.random() * zorome.length)];
         } else {
-          state.targetTime = Number((Math.random() * 11.0 + 4.0).toFixed(2));
+          state.targetTime = Number((Math.random() * 28.0 + 2.0).toFixed(2));
         }
       }
       state.targetLabelText = state.targetTime.toFixed(2) + 's';
